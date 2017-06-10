@@ -15,11 +15,8 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.Circle;
 import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.Marker;
-import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -276,7 +273,7 @@ public class ClimateMap extends FragmentActivity implements OnMapReadyCallback, 
         int min = getMin(list);
         int max = getMax(list);
         for(ClimateData data: list){
-            if(data.GET_region.equals(location)){
+            if(data.GET_region().equals(location)){
                 mMap.addCircle(circleOptions.get(getColorValue(data, min, max)).center(getLatLng(data)));
                 mMap.moveCamera(CameraUpdateFactory.newLatLng(getLatLng(data)));
             }
@@ -309,7 +306,7 @@ public class ClimateMap extends FragmentActivity implements OnMapReadyCallback, 
     }
 
     public LatLng getLatLng(ClimateData data){
-        String region = data.GET_region;
+        String region = data.GET_region();
         switch(region) {
             case("Amherst"):
                 return new LatLng(45.816667000, -64.216720600);
