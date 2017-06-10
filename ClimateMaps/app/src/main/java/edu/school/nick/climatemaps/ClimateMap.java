@@ -270,26 +270,26 @@ public class ClimateMap extends FragmentActivity implements OnMapReadyCallback, 
 
     public void updateCircles(ArrayList<ClimateData> list, GoogleMap mMap, String location){
         mMap.clear();
-        int min = getMin(list);
-        int max = getMax(list);
+        double min = getMin(list);
+        double max = getMax(list);
         for(ClimateData data: list){
             if(data.GET_region().equals(location)){
-                mMap.addCircle(circleOptions.get(getColorValue(data, min, max)).center(getLatLng(data)));
+                mMap.addCircle(circleOptions.get((int) getColorValue(data, min, max)).center(getLatLng(data)));
                 mMap.moveCamera(CameraUpdateFactory.newLatLng(getLatLng(data)));
             }
         }
     }
 
-    public int getMin(ArrayList<ClimateData> list){
-        int min = 100000;
+    public double getMin(ArrayList<ClimateData> list){
+        double min = 100000;
         for(ClimateData data: list){
             if(data.GET_value()<min)
                 min = data.GET_value();
         }
         return min;
     }
-    public int getMax(ArrayList<ClimateData> list){
-        int max = -10000;
+    public double getMax(ArrayList<ClimateData> list){
+        double max = -10000;
         for(ClimateData data: list){
             if(data.GET_value()>max)
                 max = data.GET_value();
@@ -297,12 +297,12 @@ public class ClimateMap extends FragmentActivity implements OnMapReadyCallback, 
         return max;
     }
     //assign a value from 0 - 10
-    public int getColorValue(ClimateData data, int listMin, int listMax){
-        int value = data.GET_value();
+    public double getColorValue(ClimateData data, double listMin, double listMax){
+        double value = data.GET_value();
         if(value == listMin)
             return 0;
         else
-            return (int) Math.floor((value-listMin)/(listMax-listMin)*10);
+            return Math.floor((value-listMin)/(listMax-listMin)*10);
     }
 
     public LatLng getLatLng(ClimateData data){
@@ -310,43 +310,30 @@ public class ClimateMap extends FragmentActivity implements OnMapReadyCallback, 
         switch(region) {
             case("Amherst"):
                 return new LatLng(45.816667000, -64.216720600);
-                break;
             case("Annapolis"):
                 return new LatLng(44.742226000, -65.515822000);
-                break;
             case("Annapolis Valley"):
                 return new LatLng(44.916666700, -65.166666700);
-                break;
             case("Cape Breton West"):
                 return new LatLng(46.029337000, -60.236447200);
-                break;
             case("Guysborough"):
                 return new LatLng(45.390607500, -61.498962700);
-                break;
             case("HRM"):
                 return new LatLng(44.648763500, -63.575238700);
-                break;
             case("Kentville"):
                 return new LatLng(45.076911500, -64.494473500);
-                break;
             case("Liverpool"):
                 return new LatLng(44.032977200, -64.717678300);
-                break;
             case("Lunengurg"):
                 return new LatLng(44.377005300, -64.318835400);
-                break;
             case("Pictou-Antigonish"):
                 return new LatLng(45.679332000, -62.720603000);
-                break;
             case("Sydney"):
                 return new LatLng(46.136789900, -60.194224000);
-                break;
             case("Truro"):
                 return new LatLng(45.365773300, -63.286940700);
-                break;
             case("Yarmouth"):
                 return new LatLng(43.837457600, -66.117382000);
-                break;
             default:
                 return null;
         }
