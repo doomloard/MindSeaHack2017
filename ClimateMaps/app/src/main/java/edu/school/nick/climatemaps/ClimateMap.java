@@ -22,8 +22,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 public class ClimateMap extends FragmentActivity implements OnMapReadyCallback, SeekBar.OnSeekBarChangeListener {
+    CSVParser parser = new CSVParser();
+    public ArrayList<ClimateData> masterList = parser.ParseData();
 
-    public ArrayList<ClimateData> masterList = new ArrayList<>();
 
     public ArrayList<ClimateData> temperatureSummer = new ArrayList<>();
     public ArrayList<ClimateData> temperatureWinter = new ArrayList<>();
@@ -121,10 +122,15 @@ public class ClimateMap extends FragmentActivity implements OnMapReadyCallback, 
     private int selectedParameter;
     private int selectedSubParameter;
 
+    public ClimateMap() throws Exception {
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_climate_map);
+
+        divideLists(masterList);
 
         parameterCell = (RelativeLayout) findViewById(R.id.activity_climate_map_parameters);
 
