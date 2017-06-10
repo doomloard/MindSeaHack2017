@@ -9,11 +9,22 @@ public class ClimateData {
     private String region;
     private String parameter;
     private String unit;
-    private String range;
+    private int range;
     private double value;
+    private String subParameter;
+    private boolean hasSubType;
+
+    public Boolean getHasSubType() {
+        return hasSubType;
+    }
+
+    public void setHasSubType(Boolean hasSubType) {
+        this.hasSubType = hasSubType;
+    }
+
 
     /************ Contructor ******************/
-    public ClimateData (String region, String parameter, String unit, String range, double value)  {
+    public ClimateData (String region, String parameter, String unit, int range, double value)  {
         this.region = region;
         this.parameter = parameter;
         this.unit = unit;
@@ -35,12 +46,18 @@ public class ClimateData {
         return unit;
     }
 
-    public String GET_range () {
+    public int GET_range () {
         return range;
     }
 
     public double GET_value () {
         return value;
+    }
+
+    public String GET_subParameter () { return subParameter; }
+
+    public String GET_SubParameter() {
+        return subParameter;
     }
     /*******************************************/
 
@@ -57,12 +74,16 @@ public class ClimateData {
         u = unit;
     }
 
-    public void SET_range (String r) {
+    public void SET_range (int r) {
         r = range;
     }
 
     public void SET_value (double v) {
         v = value;
+    }
+
+    public void SET_SubParameter(String subParameter) {
+        this.subParameter = subParameter;
     }
     /*******************************************/
 
