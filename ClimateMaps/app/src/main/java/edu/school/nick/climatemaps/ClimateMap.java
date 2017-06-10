@@ -23,26 +23,26 @@ import java.util.Arrays;
 
 public class ClimateMap extends FragmentActivity implements OnMapReadyCallback, SeekBar.OnSeekBarChangeListener {
 
-    public ArrayList<ClimateData> masterList = new ArrayList<ClimateData>();
+    public ArrayList<ClimateData> masterList = new ArrayList<>();
 
-    public ArrayList<ClimateData> temperatureSummer = new ArrayList<ClimateData>();
-    public ArrayList<ClimateData> temperatureWinter = new ArrayList<ClimateData>();
-    public ArrayList<ClimateData> temperatureFall = new ArrayList<ClimateData>();
-    public ArrayList<ClimateData> temperatureSpring = new ArrayList<ClimateData>();
-    public ArrayList<ClimateData> temperatureAnnual = new ArrayList<ClimateData>();
-    public ArrayList<ClimateData> waterShortage = new ArrayList<ClimateData>();
-    public ArrayList<ClimateData> waterSurplus = new ArrayList<ClimateData>();
-    public ArrayList<ClimateData> precipitationSummer = new ArrayList<ClimateData>();
-    public ArrayList<ClimateData> precipitationWinter = new ArrayList<ClimateData>();
-    public ArrayList<ClimateData> precipitationSpring = new ArrayList<ClimateData>();
-    public ArrayList<ClimateData> precipitaitonFall = new ArrayList<ClimateData>();
-    public ArrayList<ClimateData> precipitationAnnual = new ArrayList<ClimateData>();
-    public ArrayList<ClimateData> coldDays = new ArrayList<ClimateData>();
-    public ArrayList<ClimateData> hotDays = new ArrayList<ClimateData>();
+    public ArrayList<ClimateData> temperatureSummer = new ArrayList<>();
+    public ArrayList<ClimateData> temperatureWinter = new ArrayList<>();
+    public ArrayList<ClimateData> temperatureFall = new ArrayList<>();
+    public ArrayList<ClimateData> temperatureSpring = new ArrayList<>();
+    public ArrayList<ClimateData> temperatureAnnual = new ArrayList<>();
+    public ArrayList<ClimateData> waterShortage = new ArrayList<>();
+    public ArrayList<ClimateData> waterSurplus = new ArrayList<>();
+    public ArrayList<ClimateData> precipitationSummer = new ArrayList<>();
+    public ArrayList<ClimateData> precipitationWinter = new ArrayList<>();
+    public ArrayList<ClimateData> precipitationSpring = new ArrayList<>();
+    public ArrayList<ClimateData> precipitaitonFall = new ArrayList<>();
+    public ArrayList<ClimateData> precipitationAnnual = new ArrayList<>();
+    public ArrayList<ClimateData> coldDays = new ArrayList<>();
+    public ArrayList<ClimateData> hotDays = new ArrayList<>();
 
     private GoogleMap mMap;
     int radius = 1000;
-    ArrayList<CircleOptions> circleOptions = new ArrayList<CircleOptions>(Arrays.asList(
+    ArrayList<CircleOptions> circleOptions = new ArrayList<>(Arrays.asList(
             new CircleOptions()
                     .radius(radius)   //set radius in meters
                     .fillColor(0x7FFF0000)  //Transparent Greem
@@ -115,6 +115,11 @@ public class ClimateMap extends FragmentActivity implements OnMapReadyCallback, 
     private boolean subparamsVisible;
 
     private ArrayList<String> parameters;
+    private ArrayList<String> locations;
+
+    private int selectedLocation;
+    private int selectedParameter;
+    private int selectedSubParameter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -131,12 +136,16 @@ public class ClimateMap extends FragmentActivity implements OnMapReadyCallback, 
         subParameterTextView = (TextView) parameterCell.findViewById(R.id.cell_parameters_sub_parameter_text_view);
 
         parameters = new ArrayList<>(Arrays.asList(getResources().getStringArray(R.array.Parameters)));
+        locations = new ArrayList<>(Arrays.asList(getResources().getStringArray(R.array.Locations)));
 
         locationSpinner = (Spinner) parameterCell.findViewById(R.id.cell_parameters_location_spinner);
         locationSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                selectedLocation = position;
+
                 // Update the map
+                buildMapParams();
             }
 
             @Override
@@ -147,9 +156,13 @@ public class ClimateMap extends FragmentActivity implements OnMapReadyCallback, 
         parameterSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                // Update the map
                 // Call configureSubParameters() with your parameter string which will update your subparameters view
+
+                selectedParameter = position;
                 configureSubParameters(parameters.get(position));
+
+                // Update the map
+                buildMapParams();
             }
 
             @Override
@@ -160,7 +173,10 @@ public class ClimateMap extends FragmentActivity implements OnMapReadyCallback, 
         subparamSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                selectedSubParameter = position;
+
                 // Update the map
+                buildMapParams();
             }
 
             @Override
@@ -230,6 +246,10 @@ public class ClimateMap extends FragmentActivity implements OnMapReadyCallback, 
         }
     }
 
+    private void buildMapParams() {
+        updateCircles(masterList, mMap, locations.get(selectedLocation));
+    }
+
     @Override
     public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
         // If the slider updates, you'll get the callback here, so update map
@@ -284,7 +304,7 @@ public class ClimateMap extends FragmentActivity implements OnMapReadyCallback, 
         int min = 100000;
         for(ClimateData data: list){
             if(data.GET_value()<min)
-                min = data.GET_value();
+                min = (int) data.GET_value();
         }
         return min;
     }
@@ -292,13 +312,13 @@ public class ClimateMap extends FragmentActivity implements OnMapReadyCallback, 
         int max = -10000;
         for(ClimateData data: list){
             if(data.GET_value()>max)
-                max = data.GET_value();
+                max = (int) data.GET_value();
         }
         return max;
     }
     //assign a value from 0 - 10
     public int getColorValue(ClimateData data, int listMin, int listMax){
-        int value = data.GET_value();
+        int value = (int) data.GET_value();
         if(value == listMin)
             return 0;
         else
@@ -310,43 +330,30 @@ public class ClimateMap extends FragmentActivity implements OnMapReadyCallback, 
         switch(region) {
             case("Amherst"):
                 return new LatLng(45.816667000, -64.216720600);
-                break;
             case("Annapolis"):
                 return new LatLng(44.742226000, -65.515822000);
-                break;
             case("Annapolis Valley"):
                 return new LatLng(44.916666700, -65.166666700);
-                break;
             case("Cape Breton West"):
                 return new LatLng(46.029337000, -60.236447200);
-                break;
             case("Guysborough"):
                 return new LatLng(45.390607500, -61.498962700);
-                break;
             case("HRM"):
                 return new LatLng(44.648763500, -63.575238700);
-                break;
             case("Kentville"):
                 return new LatLng(45.076911500, -64.494473500);
-                break;
             case("Liverpool"):
                 return new LatLng(44.032977200, -64.717678300);
-                break;
             case("Lunengurg"):
                 return new LatLng(44.377005300, -64.318835400);
-                break;
             case("Pictou-Antigonish"):
                 return new LatLng(45.679332000, -62.720603000);
-                break;
             case("Sydney"):
                 return new LatLng(46.136789900, -60.194224000);
-                break;
             case("Truro"):
                 return new LatLng(45.365773300, -63.286940700);
-                break;
             case("Yarmouth"):
                 return new LatLng(43.837457600, -66.117382000);
-                break;
             default:
                 return null;
         }
