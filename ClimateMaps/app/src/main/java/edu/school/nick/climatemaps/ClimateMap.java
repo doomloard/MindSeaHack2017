@@ -3,6 +3,8 @@ package edu.school.nick.climatemaps;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.RelativeLayout;
 import android.widget.SeekBar;
@@ -15,6 +17,9 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+
+import java.util.ArrayList;
+import java.util.Arrays;
 
 public class ClimateMap extends FragmentActivity implements OnMapReadyCallback, SeekBar.OnSeekBarChangeListener {
 
@@ -30,6 +35,12 @@ public class ClimateMap extends FragmentActivity implements OnMapReadyCallback, 
     private Spinner subparamSpinner;
     private SeekBar seekBar;
 
+    private TextView subParameterTextView;
+
+    private boolean subparamsVisible;
+
+    private ArrayList<String> parameters;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -42,14 +53,50 @@ public class ClimateMap extends FragmentActivity implements OnMapReadyCallback, 
         toolbarTitleTextView.setText("Climate App");
         toolbarTitleTextView.setTextColor(Color.BLACK);
 
-        parameterSpinner = (Spinner) parameterCell.findViewById(R.id.cell_parameters_parameter_spinner);
+        subParameterTextView = (TextView) parameterCell.findViewById(R.id.cell_parameters_sub_parameter_text_view);
+
+        parameters = new ArrayList<>(Arrays.asList(getResources().getStringArray(R.array.Parameters)));
+
         locationSpinner = (Spinner) parameterCell.findViewById(R.id.cell_parameters_location_spinner);
+        locationSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                // Update the map
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {}
+        });
+
+        parameterSpinner = (Spinner) parameterCell.findViewById(R.id.cell_parameters_parameter_spinner);
+        parameterSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                // Update the map
+                // Call configureSubParameters() with your parameter string which will update your subparameters view
+                configureSubParameters(parameters.get(position));
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {}
+        });
+
         subparamSpinner = (Spinner) parameterCell.findViewById(R.id.cell_parameters_sub_parameter_spinner);
+        subparamSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {}
+        });
+
         seekBar = (SeekBar) parameterCell.findViewById(R.id.cell_parameters_seek_bar);
         seekBar.setOnSeekBarChangeListener(this);
 
         configureParameters();
-        configureSubParameters();
+        configureSubParameters("");
         configureLocations();
 
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
@@ -64,10 +111,32 @@ public class ClimateMap extends FragmentActivity implements OnMapReadyCallback, 
         parameterSpinner.setAdapter(parametersAdapter);
     }
 
-    private void configureSubParameters() {
-        ArrayAdapter<CharSequence> subParametersAdapter = ArrayAdapter.createFromResource(this, R.array.Water_Subparams, R.layout.custom_spinner_item);
-        subParametersAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        subparamSpinner.setAdapter(subParametersAdapter);
+    private void configureSubParameters(String parameter) {
+        ArrayAdapter<CharSequence> subParametersAdapter;
+
+        switch (parameter) {
+            case "Temperature":
+                subParametersAdapter = ArrayAdapter.createFromResource(this, R.array.Temperature_Subparams, R.layout.custom_spinner_item);
+                break;
+            case "Water":
+                subParametersAdapter = ArrayAdapter.createFromResource(this, R.array.Water_Subparams, R.layout.custom_spinner_item);
+                break;
+            default:
+                subParametersAdapter = null;
+        }
+
+        if (subParametersAdapter != null) {
+            subParametersAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+            subparamSpinner.setAdapter(subParametersAdapter);
+
+            subparamsVisible = true;
+            updateView();
+            return;
+        }
+
+        subparamsVisible = false;
+        updateView();
+
     }
 
     private void configureLocations() {
@@ -76,8 +145,28 @@ public class ClimateMap extends FragmentActivity implements OnMapReadyCallback, 
         locationSpinner.setAdapter(locationAdapter);
     }
 
+    private void updateView() {
+        if (subparamSpinner != null) {
+            subparamSpinner.setVisibility(subparamsVisible ? View.VISIBLE : View.INVISIBLE);
+        }
+
+        if (subParameterTextView != null) {
+            subParameterTextView.setVisibility(subparamsVisible ? View.VISIBLE : View.INVISIBLE);
+        }
+    }
+
     @Override
     public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+        // If the slider updates, you'll get the callback here, so update map
+    }
+
+    @Override
+    public void onStartTrackingTouch(SeekBar seekBar) {
+
+    }
+
+    @Override
+    public void onStopTrackingTouch(SeekBar seekBar) {
 
     }
 
