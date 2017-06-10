@@ -290,26 +290,26 @@ public class ClimateMap extends FragmentActivity implements OnMapReadyCallback, 
 
     public void updateCircles(ArrayList<ClimateData> list, GoogleMap mMap, String location){
         mMap.clear();
-        int min = getMin(list);
-        int max = getMax(list);
+        double min = getMin(list);
+        double max = getMax(list);
         for(ClimateData data: list){
             if(data.GET_region().equals(location)){
-                mMap.addCircle(circleOptions.get(getColorValue(data, min, max)).center(getLatLng(data)));
+                mMap.addCircle(circleOptions.get((int) getColorValue(data, min, max)).center(getLatLng(data)));
                 mMap.moveCamera(CameraUpdateFactory.newLatLng(getLatLng(data)));
             }
         }
     }
 
-    public int getMin(ArrayList<ClimateData> list){
-        int min = 100000;
+    public double getMin(ArrayList<ClimateData> list){
+        double min = 100000;
         for(ClimateData data: list){
             if(data.GET_value()<min)
                 min = (int) data.GET_value();
         }
         return min;
     }
-    public int getMax(ArrayList<ClimateData> list){
-        int max = -10000;
+    public double getMax(ArrayList<ClimateData> list){
+        double max = -10000;
         for(ClimateData data: list){
             if(data.GET_value()>max)
                 max = (int) data.GET_value();
@@ -317,12 +317,13 @@ public class ClimateMap extends FragmentActivity implements OnMapReadyCallback, 
         return max;
     }
     //assign a value from 0 - 10
-    public int getColorValue(ClimateData data, int listMin, int listMax){
-        int value = (int) data.GET_value();
+
+    public double getColorValue(ClimateData data, double listMin, double listMax){
+        double value = data.GET_value();
         if(value == listMin)
             return 0;
         else
-            return (int) Math.floor((value-listMin)/(listMax-listMin)*10);
+            return Math.floor((value-listMin)/(listMax-listMin)*10);
     }
 
     public LatLng getLatLng(ClimateData data){
