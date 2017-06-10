@@ -85,7 +85,7 @@ public class ClimateMap extends FragmentActivity implements OnMapReadyCallback, 
         subparamSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-
+                // Update the map
             }
 
             @Override
