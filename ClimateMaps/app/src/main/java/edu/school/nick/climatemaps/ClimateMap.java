@@ -1,5 +1,7 @@
 package edu.school.nick.climatemaps;
 
+import android.content.res.AssetManager;
+import android.content.res.Resources;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
@@ -18,14 +20,14 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 
 public class ClimateMap extends FragmentActivity implements OnMapReadyCallback, SeekBar.OnSeekBarChangeListener {
     CSVParser parser = new CSVParser();
-    public ArrayList<ClimateData> masterList = parser.ParseData();
 
-
+    public ArrayList<ClimateData> masterList = null;
     public ArrayList<ClimateData> temperatureSummer = new ArrayList<>();
     public ArrayList<ClimateData> temperatureWinter = new ArrayList<>();
     public ArrayList<ClimateData> temperatureFall = new ArrayList<>();
@@ -128,7 +130,16 @@ public class ClimateMap extends FragmentActivity implements OnMapReadyCallback, 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_climate_map);
+        AssetManager assetManager = getAssets();
+        try {
+
+            InputStream parseingFile = assetManager.open("ns_climate_change_data.csv");
+            masterList = parser.ParseData(parseingFile);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
         divideLists(masterList);
 

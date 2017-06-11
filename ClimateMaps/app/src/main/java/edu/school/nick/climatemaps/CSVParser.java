@@ -2,8 +2,8 @@ package edu.school.nick.climatemaps;
 
 
 import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 
 /**
@@ -14,14 +14,14 @@ public class CSVParser {
     BufferedReader bufferedReader = null;
     String line;
 
+    public ArrayList<ClimateData> ParseData(InputStream fileStreamIn) throws Exception {
 
-    public ArrayList<ClimateData> ParseData() throws Exception {
-        String csvString = "NS_Climate_Change_Data.csv";
+        String csvString = "ns_climate_change_data.csv";
         ArrayList<ClimateData> returnData = new ArrayList<ClimateData>();
         boolean firstLine = true;
         if(csvString != null) {
             try {
-                bufferedReader = new BufferedReader(new FileReader(csvString));
+                bufferedReader = new BufferedReader(new InputStreamReader( fileStreamIn ));
                 while ( (line = bufferedReader.readLine()) != null) {
                     if(firstLine) {
                         firstLine = false;
