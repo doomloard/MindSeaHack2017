@@ -5,6 +5,7 @@ import android.content.res.Resources;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -12,6 +13,7 @@ import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -42,6 +44,26 @@ public class ClimateMap extends FragmentActivity implements OnMapReadyCallback, 
     public ArrayList<ClimateData> precipitationAnnual = new ArrayList<>();
     public ArrayList<ClimateData> coldDays = new ArrayList<>();
     public ArrayList<ClimateData> hotDays = new ArrayList<>();
+    private android.support.v7.widget.Toolbar toolbar;
+    private TextView toolbarTitleTextView;
+
+    private RelativeLayout parameterCell;
+
+    private Spinner parameterSpinner;
+    private Spinner locationSpinner;
+    private Spinner subparamSpinner;
+    private SeekBar seekBar;
+
+    private TextView subParameterTextView;
+
+    private boolean subparamsVisible;
+
+    private ArrayList<String> parameters;
+    private ArrayList<String> locations;
+
+    private int selectedLocation;
+    private int selectedParameter;
+    private int selectedSubParameter;
 
     private GoogleMap mMap;
     int radius = 1000;
@@ -102,27 +124,6 @@ public class ClimateMap extends FragmentActivity implements OnMapReadyCallback, 
                     .strokeColor(0x10000000)
                     .strokeWidth(5)
     ));
-    
-    private android.support.v7.widget.Toolbar toolbar;
-    private TextView toolbarTitleTextView;
-
-    private RelativeLayout parameterCell;
-
-    private Spinner parameterSpinner;
-    private Spinner locationSpinner;
-    private Spinner subparamSpinner;
-    private SeekBar seekBar;
-
-    private TextView subParameterTextView;
-
-    private boolean subparamsVisible;
-
-    private ArrayList<String> parameters;
-    private ArrayList<String> locations;
-
-    private int selectedLocation;
-    private int selectedParameter;
-    private int selectedSubParameter;
 
     public ClimateMap() throws Exception {
     }
@@ -147,7 +148,7 @@ public class ClimateMap extends FragmentActivity implements OnMapReadyCallback, 
 
         toolbar = (android.support.v7.widget.Toolbar) findViewById(R.id.activity_climate_map_toolbar);
         toolbarTitleTextView = (TextView) toolbar.findViewById(R.id.toolbar_text_view);
-        toolbarTitleTextView.setText("Climate App");
+        toolbarTitleTextView.setText("Climate Map");
         toolbarTitleTextView.setTextColor(Color.BLACK);
 
         subParameterTextView = (TextView) parameterCell.findViewById(R.id.cell_parameters_sub_parameter_text_view);
@@ -310,10 +311,19 @@ public class ClimateMap extends FragmentActivity implements OnMapReadyCallback, 
         double min = getMin(list);
         double max = getMax(list);
         for(ClimateData data: list){
-            if(data.GET_region().equals(location)){
-                mMap.addCircle(circleOptions.get((int) getColorValue(data, min, max)).center(getLatLng(data)));
-                mMap.moveCamera(CameraUpdateFactory.newLatLng(getLatLng(data)));
+            try {
+                if (data.GET_region().equals(location)) {
+
+                    Log.d("GETCOLORDATACLIMATE", Double.toString(getColorValue(data, min, max)));
+                    mMap.addCircle(circleOptions.get((int) getColorValue(data, min, max)).center(getLatLng(data)));
+                    mMap.moveCamera(CameraUpdateFactory.newLatLng(getLatLng(data)));
+                }
             }
+            catch (Exception exc) {
+                Toast.makeText(ClimateMap.this, "Something borked", Toast.LENGTH_SHORT).show();
+                Log.e("SOMETHINGBorked", exc.getMessage());
+            }
+
         }
     }
 
