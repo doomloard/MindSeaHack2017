@@ -1,7 +1,6 @@
 package edu.school.nick.climatemaps;
 
 import android.content.res.AssetManager;
-import android.content.res.Resources;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
@@ -13,7 +12,6 @@ import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -313,17 +311,13 @@ public class ClimateMap extends FragmentActivity implements OnMapReadyCallback, 
         for(ClimateData data: list){
             try {
                 if (data.GET_region().equals(location)) {
-
-                    Log.d("GETCOLORDATACLIMATE", Double.toString(getColorValue(data, min, max)));
                     mMap.addCircle(circleOptions.get((int) getColorValue(data, min, max)).center(getLatLng(data)));
                     mMap.moveCamera(CameraUpdateFactory.newLatLng(getLatLng(data)));
                 }
             }
             catch (Exception exc) {
-                Toast.makeText(ClimateMap.this, "Something borked", Toast.LENGTH_SHORT).show();
-                Log.e("SOMETHINGBorked", exc.getMessage());
+                Log.e("ErrorUpdatingCircle", "Error Updateing circle's", exc);
             }
-
         }
     }
 
@@ -372,7 +366,7 @@ public class ClimateMap extends FragmentActivity implements OnMapReadyCallback, 
                 return new LatLng(45.076911500, -64.494473500);
             case("Liverpool"):
                 return new LatLng(44.032977200, -64.717678300);
-            case("Lunengurg"):
+            case("Lunenburg"):
                 return new LatLng(44.377005300, -64.318835400);
             case("Pictou-Antigonish"):
                 return new LatLng(45.679332000, -62.720603000);
